@@ -11,27 +11,21 @@ import java.util.List;
 @Getter @Setter
 @AllArgsConstructor
 public class PostDetailRetrieveResponseDto {
-    private Data data;
+    private Long postId;
+    private String userNickname;
+    private String title;
+    private String content;
+    private List<String> images;
+    private Integer likeCount;
+    private Integer commentCount;
+    private Long viewCount;
 
-    @Getter @Setter
-    @AllArgsConstructor
-    public static class Data {
-        private Long postId;
-        private String userNickname;
-        private String title;
-        private String content;
-        private List<String> images;
-        private Integer likeCount;
-        private Integer commentCount;
-        private Long viewCount;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime modifiedAt;
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime createdAt;
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime modifiedAt;
-
-        private Boolean canEdit;
-        private Boolean canDelete;
-        private Boolean liked;
-    }
+    private Boolean canEdit;
+    private Boolean canDelete;
+    private Boolean liked;
 }

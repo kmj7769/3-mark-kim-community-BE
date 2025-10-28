@@ -144,9 +144,9 @@ public class PostServiceImpl implements PostService {
                 .otherwise(false);
 
         // 조인 후 조건에 맞는 게시글 상세 정보 조회 및 DTO 매핑
-        PostDetailRetrieveResponseDto.Data data = jpaQueryFactory
+        PostDetailRetrieveResponseDto postDetailRetrieveResponseDto = jpaQueryFactory
                 .select(Projections.constructor(
-                        PostDetailRetrieveResponseDto.Data.class,
+                        PostDetailRetrieveResponseDto.class,
                         post.id,
                         user.nickname,
                         post.title,
@@ -170,7 +170,7 @@ public class PostServiceImpl implements PostService {
                 .fetchOne();
 
         // postId에 해당하는 게시글이 없을 경우 예외 처리
-        if (data == null) {
+        if (postDetailRetrieveResponseDto == null) {
             throw new IllegalArgumentException("post not found");
         }
 
@@ -182,9 +182,9 @@ public class PostServiceImpl implements PostService {
                 .fetch();
 
         // DTO에 이미지 매핑
-        data.setImages(images);
+        postDetailRetrieveResponseDto.setImages(images);
 
-        return new PostDetailRetrieveResponseDto(data);
+        return postDetailRetrieveResponseDto;
     }
 
     @Transactional

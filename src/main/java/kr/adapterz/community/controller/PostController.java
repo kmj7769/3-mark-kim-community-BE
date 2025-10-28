@@ -50,11 +50,18 @@ public class PostController {
 
     // 게시글 상세 조회 작업을 처리하는 메서드
     @GetMapping("/{postId}")
-    public PostDetailRetrieveResponseDto retrievePostDetail(
+    public ResponseEntity<ApiResponseDto<PostDetailRetrieveResponseDto>> retrievePostDetail(
             @PathVariable("postId") Long postId,
-            @RequestParam(required = false) Long userId
+            @RequestHeader Long userId
     ) {
-        return postService.getPostDetail(postId, userId);
+        PostDetailRetrieveResponseDto postDetailRetrieveResponseDto = postService.getPostDetail(postId, userId);
+        ApiResponseDto<PostDetailRetrieveResponseDto> apiResponseDto = new ApiResponseDto<>(
+                HttpStatus.OK.value(),
+                "Post details are retrieved successfully.",
+                null,
+                postDetailRetrieveResponseDto
+        );
+        return ResponseEntity.ok(apiResponseDto);
     }
 
     // 게시글 수정 작업을 처리하는 메서드
