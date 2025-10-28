@@ -3,6 +3,7 @@ package kr.adapterz.community.controller;
 import kr.adapterz.community.dto.ApiResponseDto;
 import kr.adapterz.community.dto.comment.AddCommentRequestDto;
 import kr.adapterz.community.dto.comment.AddCommentResponseDto;
+import kr.adapterz.community.dto.comment.CommentListRetrieveResponseDto;
 import kr.adapterz.community.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ public class CommentController {
             @RequestBody AddCommentRequestDto addCommentRequestDto,
             @PathVariable Long postId) {
         AddCommentResponseDto addCommentResponseDto = commentService.addComment(addCommentRequestDto, userId, postId);
+
         ApiResponseDto<AddCommentResponseDto> apiResponseDto = new ApiResponseDto<>(
                 HttpStatus.CREATED.value(),
                 "Add comment successfully",
@@ -32,5 +34,25 @@ public class CommentController {
         );
 
         return ResponseEntity.created(URI.create("/posts/" + postId + "/comments")).body(apiResponseDto);
+    }
+
+    // 댓글 목록 조회 작업을 처리하는 메서드
+    @GetMapping
+    public ResponseEntity<ApiResponseDto<CommentListRetrieveResponseDto>> retrieveCommentList(
+            @RequestHeader Long userId,
+            @PathVariable Long postId,
+            @RequestParam(required = false) Long lastFetchId,
+            @RequestParam Integer limit
+    ) {
+        CommentListRetrieveResponseDto commentListRetrieveResponseDto = commentService.getCommentList(lastFetchId, limit, userId, postId);
+
+        ApiResponseDto<CommentListRetrieveResponseDto> apiResponseDto = new ApiResponseDto<>(
+                HttpStatus.OK.value(),
+                "Comment list retrieved successfully.",
+                null,
+                commentListRetrieveResponseDto
+        );
+
+        return ResponseEntity.ok(apiResponseDto);
     }
 }
