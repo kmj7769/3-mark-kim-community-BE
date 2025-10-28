@@ -1,10 +1,7 @@
 package kr.adapterz.community.controller;
 
 import kr.adapterz.community.dto.ApiResponseDto;
-import kr.adapterz.community.dto.comment.AddCommentRequestDto;
-import kr.adapterz.community.dto.comment.AddCommentResponseDto;
 import kr.adapterz.community.dto.post.*;
-import kr.adapterz.community.service.CommentService;
 import kr.adapterz.community.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +16,6 @@ import java.net.URI;
 public class PostController {
 
     private final PostService postService;
-    private final CommentService commentService;
 
     // 게시글 추가 작업을 처리하는 메서드
     @PostMapping
@@ -74,21 +70,5 @@ public class PostController {
     @DeleteMapping("/{postId}")
     public void deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
-    }
-
-    @PostMapping("/{postId}/comments")
-    public ResponseEntity<ApiResponseDto<AddCommentResponseDto>> addComment(
-            @RequestHeader Long userId,
-            @RequestBody AddCommentRequestDto addCommentRequestDto,
-            @PathVariable Long postId) {
-        AddCommentResponseDto addCommentResponseDto = commentService.addComment(addCommentRequestDto, userId, postId);
-        ApiResponseDto<AddCommentResponseDto> apiResponseDto = new ApiResponseDto<>(
-                HttpStatus.CREATED.value(),
-                "Add comment successfully",
-                "/posts/" + postId + "/comments",
-                addCommentResponseDto
-        );
-
-        return ResponseEntity.created(URI.create("/posts/" + postId + "/comments")).body(apiResponseDto);
     }
 }
