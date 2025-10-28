@@ -1,13 +1,13 @@
 package kr.adapterz.community.dto.post;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
-@Getter @Setter
-@AllArgsConstructor
+@Getter
+@Builder
 public class PostListRetrieveResponseDto {
     private List<PostOneInListDto> posts;
+    private Long lastFetchId;
 }

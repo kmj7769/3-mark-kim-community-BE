@@ -105,7 +105,12 @@ public class PostServiceImpl implements PostService {
                 .limit(limit)
                 .fetch();
 
-        return new PostListRetrieveResponseDto(posts);
+        Long nextLastFetchId = null;
+        if (!posts.isEmpty()) {
+            nextLastFetchId = posts.getLast().getPostId();
+        }
+
+        return PostListRetrieveResponseDto.builder().posts(posts).lastFetchId(nextLastFetchId).build();
     }
 
     public PostDetailRetrieveResponseDto getPostDetail(Long postId, Long userId) {
