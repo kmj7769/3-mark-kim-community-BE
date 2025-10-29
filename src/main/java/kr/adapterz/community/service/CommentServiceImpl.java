@@ -61,7 +61,7 @@ public class CommentServiceImpl implements CommentService {
                 .content(comment.getContent())
                 .userNickname(user.getNickname())
                 .profileImage(user.getProfileImage())
-                .createdAt(comment.getCreatedAt())
+                .modifiedAt(comment.getCreatedAt())
                 .build();
     }
 
