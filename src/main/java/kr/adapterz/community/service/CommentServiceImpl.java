@@ -60,6 +60,7 @@ public class CommentServiceImpl implements CommentService {
                 .commentId(comment.getId())
                 .content(comment.getContent())
                 .userNickname(user.getNickname())
+                .profileImage(user.getProfileImage())
                 .createdAt(comment.getCreatedAt())
                 .build();
     }
