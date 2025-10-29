@@ -149,6 +149,7 @@ public class PostServiceImpl implements PostService {
                         PostDetailRetrieveResponseDto.class,
                         post.id,
                         user.nickname,
+                        user.profileImage,
                         post.title,
                         post.content,
                         Expressions.constant(List.of()),

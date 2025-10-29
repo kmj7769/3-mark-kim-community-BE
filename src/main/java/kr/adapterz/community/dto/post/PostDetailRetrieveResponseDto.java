@@ -13,6 +13,7 @@ import java.util.List;
 public class PostDetailRetrieveResponseDto {
     private Long postId;
     private String userNickname;
+    private String profileImage;
     private String title;
     private String content;
     private List<String> images;
