@@ -86,6 +86,7 @@ public class CommentServiceImpl implements CommentService {
                                 CommentOneInListDto.class,
                                 comment.id,
                                 user.nickname,
+                                user.profileImage,
                                 comment.content,
                                 comment.modifiedAt,
                                 permission,

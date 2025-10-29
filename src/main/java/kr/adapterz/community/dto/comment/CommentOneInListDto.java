@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class CommentOneInListDto {
     private Long commentId;
     private String userNickname;
+    private String profileImage;
     private String content;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
