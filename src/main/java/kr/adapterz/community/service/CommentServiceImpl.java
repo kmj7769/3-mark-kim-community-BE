@@ -11,33 +11,27 @@ import kr.adapterz.community.dto.comment.CommentListRetrieveResponseDto;
 import kr.adapterz.community.dto.comment.CommentOneInListDto;
 import kr.adapterz.community.entity.*;
 import kr.adapterz.community.repository.CommentRepository;
+import kr.adapterz.community.repository.PostLikeAndCommentCountRepository;
 import kr.adapterz.community.repository.PostRepository;
 import kr.adapterz.community.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final JPAQueryFactory jpaQueryFactory;
+    private final PostLikeAndCommentCountRepository postLikeAndCommentCountRepository;
 
-    @Autowired
-    public CommentServiceImpl(
-            CommentRepository commentRepository,
-            UserRepository userRepository,
-            PostRepository postRepository,
-            JPAQueryFactory jpaQueryFactory) {
-        this.commentRepository = commentRepository;
-        this.userRepository = userRepository;
-        this.postRepository = postRepository;
-        this.jpaQueryFactory = jpaQueryFactory;
-    }
+    private final PostLikeAndCommentCountService postLikeAndCommentCountService;
+
+    private final JPAQueryFactory jpaQueryFactory;
 
     @Transactional
     public AddCommentResponseDto addComment(AddCommentRequestDto addCommentRequestDto, Long userId, Long postId) {
@@ -55,6 +49,12 @@ public class CommentServiceImpl implements CommentService {
         // 새로운 Comment 영속화
         commentRepository.save(comment);
 
+        // 댓글 수 업데이트
+        // 집계 데이터가 없다면 먼저 생성
+        PostLikeAndCommentCount postLikeAndCommentCount = postLikeAndCommentCountRepository.findByPostId(post.getId())
+                .orElseGet(() -> postLikeAndCommentCountService.createLikeAndCommentCount(post));
+        postLikeAndCommentCount.setCommentCount(postLikeAndCommentCount.getCommentCount() + 1);
+
         // 응답 dto 매핑
         return AddCommentResponseDto.builder()
                 .commentId(comment.getId())
@@ -65,6 +65,7 @@ public class CommentServiceImpl implements CommentService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public CommentListRetrieveResponseDto getCommentList(Long lastFetchId, Integer limit, Long userId, Long postId) {
         // Q클래스
         QPost post = QPost.post;
@@ -110,6 +111,12 @@ public class CommentServiceImpl implements CommentService {
             nextLastFetchId = comments.getLast().getCommentId();
         }
 
-        return CommentListRetrieveResponseDto.builder().comments(comments).lastFetchId(nextLastFetchId).build();
+        PostLikeAndCommentCount postLikeAndCommentCount = postLikeAndCommentCountRepository.findByPostId(postId).orElse(null);
+
+        return CommentListRetrieveResponseDto.builder()
+                .comments(comments)
+                .lastFetchId(nextLastFetchId)
+                .commentCount(postLikeAndCommentCount == null ? 0 : postLikeAndCommentCount.getCommentCount())
+                .build();
     }
 }

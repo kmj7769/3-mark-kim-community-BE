@@ -10,4 +10,5 @@ import java.util.List;
 public class CommentListRetrieveResponseDto {
     private List<CommentOneInListDto> comments;
     private Long lastFetchId;
+    private Integer commentCount;
 }
