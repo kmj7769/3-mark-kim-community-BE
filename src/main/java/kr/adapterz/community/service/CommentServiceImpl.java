@@ -5,10 +5,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import kr.adapterz.community.dto.comment.AddCommentRequestDto;
-import kr.adapterz.community.dto.comment.AddCommentResponseDto;
-import kr.adapterz.community.dto.comment.CommentListRetrieveResponseDto;
-import kr.adapterz.community.dto.comment.CommentOneInListDto;
+import kr.adapterz.community.dto.comment.*;
 import kr.adapterz.community.entity.*;
 import kr.adapterz.community.repository.CommentRepository;
 import kr.adapterz.community.repository.PostLikeAndCommentCountRepository;
@@ -19,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +61,41 @@ public class CommentServiceImpl implements CommentService {
                 .profileImage(user.getProfileImage())
                 .modifiedAt(comment.getCreatedAt())
                 .build();
+    }
+
+    @Transactional
+    public Optional<CommentUpdateResponseDto> updateComment(CommentUpdateRequestDto commentUpdateRequestDto, Long userId, Long postId, Long commentId) {
+        // 해당 댓글 조회
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("comment not found"));
+
+        // 권한 확인
+        // 실패 시 빈 optional
+        if (!comment.getUser().getId().equals(userId) || !comment.getPost().getId().equals(postId)) {
+            return Optional.empty();
+        }
+
+        // 댓글 수정 및 영속화
+        comment.setContent(commentUpdateRequestDto.getContent());
+
+        // dto 매핑
+        CommentUpdateResponseDto commentUpdateResponseDto = CommentUpdateResponseDto.builder()
+                .commentId(comment.getId())
+                .content(comment.getContent())
+                .userNickname(comment.getUser().getNickname())
+                .profileImage(comment.getUser().getProfileImage())
+                .modifiedAt(comment.getModifiedAt())
+                .build();
+
+        return Optional.of(commentUpdateResponseDto);
+    }
+
+    @Transactional
+    public Optional<CommentDeleteResponseDto> deleteComment(Long userId, Long postId, Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("comment not found"));
+
+        if (!comment.getUser().getId().equals(userId) || !comment.getPost().getId().equals(postId)) {
+            return Optional.empty();
+        }
     }
 
     @Transactional(readOnly = true)
