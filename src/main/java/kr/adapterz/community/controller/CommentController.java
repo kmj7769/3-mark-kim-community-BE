@@ -66,6 +66,36 @@ public class CommentController {
         return ResponseEntity.ok(apiResponseDto);
     }
 
+    // 댓글 삭제 작업을 처리하는 메서드
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<ApiResponseDto<CommentDeleteResponseDto>> deleteComment(
+            @RequestHeader Long userId,
+            @PathVariable Long postId,
+            @PathVariable Long commentId
+    ) {
+        Optional<CommentDeleteResponseDto> commentDeleteResponseDtoOpt = commentService.deleteComment(userId, postId, commentId);
+
+        if (commentDeleteResponseDtoOpt.isEmpty()) {
+            ApiResponseDto<CommentDeleteResponseDto> apiResponseDto = new ApiResponseDto<>(
+                    HttpStatus.FORBIDDEN.value(),
+                    "There's no permission to delete this comment.",
+                    null,
+                    null
+            );
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiResponseDto);
+        }
+
+        ApiResponseDto<CommentDeleteResponseDto> apiResponseDto = new ApiResponseDto<>(
+                HttpStatus.OK.value(),
+                "Comment was deleted successfully.",
+                null,
+                commentDeleteResponseDtoOpt.get()
+        );
+
+        return ResponseEntity.ok(apiResponseDto);
+    }
+
     // 댓글 목록 조회 작업을 처리하는 메서드
     @GetMapping
     public ResponseEntity<ApiResponseDto<CommentListRetrieveResponseDto>> retrieveCommentList(

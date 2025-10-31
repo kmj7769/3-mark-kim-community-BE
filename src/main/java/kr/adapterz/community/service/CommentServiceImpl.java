@@ -69,7 +69,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("comment not found"));
 
         // 권한 확인
-        // 실패 시 빈 optional
+        // 실패 시 빈 Optional 반환
         if (!comment.getUser().getId().equals(userId) || !comment.getPost().getId().equals(postId)) {
             return Optional.empty();
         }
@@ -91,11 +91,24 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     public Optional<CommentDeleteResponseDto> deleteComment(Long userId, Long postId, Long commentId) {
+        // 해당 댓글 조회
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("comment not found"));
 
+        // 권한 확인
+        // 실패 시 빈 Optional 반환
         if (!comment.getUser().getId().equals(userId) || !comment.getPost().getId().equals(postId)) {
             return Optional.empty();
         }
+
+        // 댓글 삭제 및 영속화
+        commentRepository.delete(comment);
+
+        // dto 매핑
+        CommentDeleteResponseDto commentDeleteResponseDto = CommentDeleteResponseDto.builder()
+                .deleteCommentId(commentId)
+                .build();
+
+        return Optional.of(commentDeleteResponseDto);
     }
 
     @Transactional(readOnly = true)

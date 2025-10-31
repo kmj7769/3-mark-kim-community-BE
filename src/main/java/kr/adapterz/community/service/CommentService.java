@@ -20,6 +20,12 @@ public interface CommentService {
     Optional<CommentUpdateResponseDto> updateComment(CommentUpdateRequestDto commentUpdateRequestDto, Long userId, Long postId, Long commentId);
 
     /*
+        댓글 삭제 시 호출
+        댓글 삭제 요청을 받아 해당 Comment 엔티티를 삭제
+    */
+    Optional<CommentDeleteResponseDto> deleteComment(Long userId, Long postId, Long commentId);
+
+    /*
         댓글 목록 조회 시 호출
         lastFetchId와 limit를 받아 해당 조건에 맞는 댓글 목록을 반환
      */
