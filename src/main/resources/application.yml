@@ -1,6 +1,10 @@
 spring:
   profiles:
     include: secret
+    active: dev
+
+  config:
+    import: "classpath:application-secret.yml"
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

@@ -10,6 +10,7 @@ import kr.adapterz.community.entity.UserAuth;
 import kr.adapterz.community.repository.UserAuthRepository;
 import kr.adapterz.community.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,11 +24,15 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserAuthRepository userAuthRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository,  UserAuthRepository userAuthRepository) {
+    public UserServiceImpl(UserRepository userRepository,
+                           UserAuthRepository userAuthRepository,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userAuthRepository = userAuthRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -39,11 +44,14 @@ public class UserServiceImpl implements UserService {
                 );
         User savedUser = userRepository.save(user);
 
+        // 비밀번호 Bcrypt 암호화
+        String encodedPassword = passwordEncoder.encode(userSignUpRequestDto.getPassword());
+
         // UserAuth 엔티티 생성 및 영속화
         UserAuth userAuth = new UserAuth(
                 user,
                 userSignUpRequestDto.getEmail(),
-                userSignUpRequestDto.getPassword() // Bcrypt 암호화 방법에 대해 학습하고 수정
+                encodedPassword
         );
         UserAuth savedUserAuth = userAuthRepository.save(userAuth);
 
