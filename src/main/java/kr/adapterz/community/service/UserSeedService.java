@@ -22,7 +22,7 @@ public class UserSeedService {
     public void userSeed() {
         if (userRepository.count() >= 5) return;
 
-        IntStream.range(0, 5).forEach(i -> {
+        IntStream.range(1, 6).forEach(i -> {
             String rawPassword = "testPassword" + i + "!";
             String encodedPassword = passwordEncoder.encode(rawPassword);
 
