@@ -26,6 +26,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         String method = request.getMethod();
 
+        // /validation 경로는 모든 요청 제외
+        if (path.startsWith("/validation")) {
+            return true;
+        }
+
         if (path.equals("/auth") && method.equals("POST")) {
             return true;
         }
