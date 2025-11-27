@@ -19,6 +19,9 @@ public class CommentOneInListDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifiedAt;
 
+    @Builder.Default
     private Boolean canEdit = false;
+
+    @Builder.Default
     private Boolean canDelete = false;
 }
