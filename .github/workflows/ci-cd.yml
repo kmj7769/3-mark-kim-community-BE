@@ -123,8 +123,8 @@ jobs:
             sudo mkdir -p /usr/local/java
             sudo tar -xzf /tmp/jdk-24.0.2_linux-x64_bin.tar.gz -C /usr/local/java --strip-components=1
             sudo rm -f /usr/local/bin/java
-            sudo ln -sf /usr/local/java/bin/java /user/local/bin/java
-            java
+            sudo ln -sf /usr/local/java/bin/java /usr/local/bin/java
+            java -version
           EOF
 
       - name: Deploy to EC2 via Docker Compose
