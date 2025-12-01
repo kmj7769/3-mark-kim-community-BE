@@ -94,6 +94,8 @@ public class CommentServiceImpl implements CommentService {
         // 해당 댓글 조회
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("comment not found"));
 
+        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("post not found"));
+
         // 권한 확인
         // 실패 시 빈 Optional 반환
         if (!comment.getUser().getId().equals(userId) || !comment.getPost().getId().equals(postId)) {
@@ -102,6 +104,12 @@ public class CommentServiceImpl implements CommentService {
 
         // 댓글 삭제 및 영속화
         commentRepository.delete(comment);
+
+        // 댓글 수 업데이트
+        // 집계 데이터가 없다면 먼저 생성
+        PostLikeAndCommentCount postLikeAndCommentCount = postLikeAndCommentCountRepository.findByPostId(post.getId())
+                .orElseGet(() -> postLikeAndCommentCountService.createLikeAndCommentCount(post));
+        postLikeAndCommentCount.setCommentCount(postLikeAndCommentCount.getCommentCount() == 0 ? 0 : postLikeAndCommentCount.getCommentCount() - 1);
 
         // dto 매핑
         CommentDeleteResponseDto commentDeleteResponseDto = CommentDeleteResponseDto.builder()
