@@ -34,6 +34,8 @@ public class PostServiceImpl implements PostService {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    private final PostViewCountService postViewCountService;
+
     @Autowired
     public PostServiceImpl(
             PostRepository postRepository,
@@ -42,8 +44,8 @@ public class PostServiceImpl implements PostService {
             PostViewCountRepository postViewCountRepository,
             PostLikeRepository postLikeRepository,
             UserRepository userRepository,
-            JPAQueryFactory jpaQueryFactory
-    ) {
+            JPAQueryFactory jpaQueryFactory,
+            PostViewCountService postViewCountService) {
         this.postRepository = postRepository;
         this.postImageRepository = postImageRepository;
         this.postLikeAndCommentCountRepository = postLikeAndCommentCountRepository;
@@ -51,6 +53,7 @@ public class PostServiceImpl implements PostService {
         this.postLikeRepository = postLikeRepository;
         this.userRepository = userRepository;
         this.jpaQueryFactory = jpaQueryFactory;
+        this.postViewCountService = postViewCountService;
     }
 
     @Transactional
@@ -113,7 +116,10 @@ public class PostServiceImpl implements PostService {
         return PostListRetrieveResponseDto.builder().posts(posts).lastFetchId(nextLastFetchId).build();
     }
 
+    @Transactional
     public PostDetailRetrieveResponseDto getPostDetail(Long postId, Long userId) {
+        Post postEntity = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("post not found"));
+
         // Q클래스
         QPost post = QPost.post;
         QUser user = QUser.user;
@@ -184,6 +190,9 @@ public class PostServiceImpl implements PostService {
 
         // DTO에 이미지 매핑
         postDetailRetrieveResponseDto.setImages(images);
+
+        // 조회수 1만큼 증가
+        postViewCountService.incrementPostViewCount(postEntity);
 
         return postDetailRetrieveResponseDto;
     }
