@@ -109,7 +109,7 @@ public class CommentServiceImpl implements CommentService {
         // 집계 데이터가 없다면 먼저 생성
         PostLikeAndCommentCount postLikeAndCommentCount = postLikeAndCommentCountRepository.findByPostId(post.getId())
                 .orElseGet(() -> postLikeAndCommentCountService.createLikeAndCommentCount(post));
-        postLikeAndCommentCount.setCommentCount(postLikeAndCommentCount.getCommentCount() == 0 ? 0 : postLikeAndCommentCount.getCommentCount() - 1);
+        postLikeAndCommentCount.setCommentCount(Math.max(0, postLikeAndCommentCount.getCommentCount() - 1));
 
         // dto 매핑
         CommentDeleteResponseDto commentDeleteResponseDto = CommentDeleteResponseDto.builder()
