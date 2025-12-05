@@ -30,7 +30,7 @@ public class PostLikeServiceImpl implements PostLikeService {
     @Override
     public Optional<PostLikeResponseDto> createPostLike(Long userId, Long postId) {
 
-        PostLike postLike = postLikeRepository.findPostLikeByPostIdAndUserId(userId, postId).orElse(null);
+        PostLike postLike = postLikeRepository.findPostLikeByPostIdAndUserId(postId, userId).orElse(null);
 
         if (postLike == null) {
             User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user not found"));
@@ -55,7 +55,7 @@ public class PostLikeServiceImpl implements PostLikeService {
     @Override
     public Optional<PostLikeResponseDto> deletePostLike(Long userId, Long postId) {
 
-        PostLike postLike = postLikeRepository.findPostLikeByPostIdAndUserId(userId, postId).orElse(null);
+        PostLike postLike = postLikeRepository.findPostLikeByPostIdAndUserId(postId, userId).orElse(null);
 
         if (postLike != null) {
             Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("post not found"));
