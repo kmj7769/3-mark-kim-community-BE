@@ -69,8 +69,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     // 토큰 추출 (헤더 우선, 쿠키 다음)
     private Optional<String> extractToken(HttpServletRequest request) {
-        return extractTokenFromHeader(request)
-                .or(() -> extractTokenFromCookie(request));
+        return extractTokenFromCookie(request)
+                .or(() -> extractTokenFromHeader(request));
     }
 
     // 헤더에서 토큰 추출
