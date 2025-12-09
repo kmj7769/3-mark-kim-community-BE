@@ -1,5 +1,6 @@
 package kr.adapterz.community.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.adapterz.community.dto.ApiResponseDto;
 import kr.adapterz.community.dto.post.*;
 import kr.adapterz.community.service.PostService;
@@ -19,8 +20,10 @@ public class PostController {
 
     // 게시글 추가 작업을 처리하는 메서드
     @PostMapping
-    public ResponseEntity<ApiResponseDto<PostUploadResponseDto>> uploadPost(@RequestBody PostUploadRequestDto postUploadRequestDto) {
-        PostUploadResponseDto postUploadResponseDto = postService.savePost(postUploadRequestDto);
+    public ResponseEntity<ApiResponseDto<PostUploadResponseDto>> uploadPost(
+            HttpServletRequest request,
+            @RequestBody PostUploadRequestDto postUploadRequestDto) {
+        PostUploadResponseDto postUploadResponseDto = postService.savePost(postUploadRequestDto, (Long) request.getAttribute("userId"));
 
         ApiResponseDto<PostUploadResponseDto> apiResponseDto = new ApiResponseDto<>();
         apiResponseDto.setCode(HttpStatus.CREATED.value());
@@ -52,9 +55,9 @@ public class PostController {
     @GetMapping("/{postId}")
     public ResponseEntity<ApiResponseDto<PostDetailRetrieveResponseDto>> retrievePostDetail(
             @PathVariable("postId") Long postId,
-            @RequestHeader Long userId
+            HttpServletRequest request
     ) {
-        PostDetailRetrieveResponseDto postDetailRetrieveResponseDto = postService.getPostDetail(postId, userId);
+        PostDetailRetrieveResponseDto postDetailRetrieveResponseDto = postService.getPostDetail(postId, (Long) request.getAttribute("userId"));
         ApiResponseDto<PostDetailRetrieveResponseDto> apiResponseDto = new ApiResponseDto<>(
                 HttpStatus.OK.value(),
                 "Post details are retrieved successfully.",

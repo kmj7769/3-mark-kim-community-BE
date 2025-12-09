@@ -9,7 +9,7 @@ public interface PostService {
         게시글 생성 요청 본문을 받아 Post 엔티티를 생성
         생성된 엔티티를 DB에 저장하고 저장된 데이터 정보를 반환
     */
-    PostUploadResponseDto savePost(PostUploadRequestDto postUploadRequestDto);
+    PostUploadResponseDto savePost(PostUploadRequestDto postUploadRequestDto, Long userId);
 
     /*
         게시글 목록 조회 시 호출

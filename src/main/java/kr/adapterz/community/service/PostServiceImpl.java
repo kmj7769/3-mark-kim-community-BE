@@ -57,9 +57,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Transactional
-    public PostUploadResponseDto savePost(PostUploadRequestDto postUploadRequestDto) {
+    public PostUploadResponseDto savePost(PostUploadRequestDto postUploadRequestDto, Long userId) {
         // 해당 User 조회
-        User user = userRepository.findById(postUploadRequestDto.getUserId()).orElseThrow(() -> new IllegalArgumentException("user not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("user not found"));
 
         // Post 엔티티 생성 및 영속화
         Post post = new Post(postUploadRequestDto.getTitle(), postUploadRequestDto.getContent(), user);
